@@ -15,21 +15,28 @@ namespace PivotPointCalculation
 
         static void Main(string[] args)
         {
-            foreach (var item in args)
+           
+            if (args.Length == 0)
             {
-                Console.WriteLine(item);           
+                args = new string[1];
+                args[0] = "XBTUSD";
             }
-            var data = CandlePrice("ETHUSD").Result;
-            var price = data[1];
-              
-            Console.WriteLine($"Name ETH");
-            Console.WriteLine($"Pivot   point { Math.Round(test1.PivotPoint(price.close,price.high,price.low),2)}");
-            Console.WriteLine($"First   resistance { Math.Round(test1.Resistance(1,price.close, price.high, price.low),2)}");
-            Console.WriteLine($"Second   resistance { Math.Round(test1.Resistance(2, price.close, price.high, price.low),2)}");
-            Console.WriteLine($"Third  resistance { Math.Round(test1.Resistance(3, price.close, price.high, price.low),2)}");
-            Console.WriteLine($"First  support { Math.Round(test1.Support(1, price.close, price.high, price.low),2)}");
-            Console.WriteLine($"Second   support { Math.Round(test1.Support(2, price.close, price.high, price.low),2)}");
-            Console.WriteLine($"Third   support  { Math.Round(test1.Support(3, price.close, price.high, price.low),2)}");
+
+            foreach (var coin in args)
+            {
+                var data = CandlePrice(coin).Result;
+                var price = data[1];
+
+                Console.WriteLine($"Name {coin}");
+                Console.WriteLine($"Pivot   point { Math.Round(test1.PivotPoint(price.close, price.high, price.low), 4)}");
+                Console.WriteLine($"First   resistance { Math.Round(test1.Resistance(1, price.close, price.high, price.low), 4)}");
+                Console.WriteLine($"Second   resistance { Math.Round(test1.Resistance(2, price.close, price.high, price.low), 4)}");
+                Console.WriteLine($"Third  resistance { Math.Round(test1.Resistance(3, price.close, price.high, price.low), 4)}");
+                Console.WriteLine($"First  support { Math.Round(test1.Support(1, price.close, price.high, price.low), 4)}");
+                Console.WriteLine($"Second   support { Math.Round(test1.Support(2, price.close, price.high, price.low), 4)}");
+                Console.WriteLine($"Third   support  { Math.Round(test1.Support(3, price.close, price.high, price.low), 4)}");
+            }
+           
 
         }
 
@@ -40,7 +47,7 @@ namespace PivotPointCalculation
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
             var serializer = new DataContractJsonSerializer(typeof(List<Candle>));
-            var streamTask = client.GetStreamAsync($"https://www.bitmex.com/api/v1/trade/bucketed?binSize=1d&partial=false&symbol={coin}&count=20&reverse=true");
+            var streamTask = client.GetStreamAsync($"https://www.bitmex.com/api/v1/trade/bucketed?binSize=1d&partial=false&symbol={coin}&count=40&reverse=true");
             var repositories = serializer.ReadObject(await streamTask) as List<Candle>;
             return repositories;
         }
